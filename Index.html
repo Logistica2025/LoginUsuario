@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Registro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            /* ¡REEMPLAZA ESTO con la ruta de tu imagen de fondo si tienes una! */
+            /* Ejemplo: background-image: url('img/your-background-image.jpg'); */
+            background-color: #333; /* Fondo oscuro por defecto si no hay imagen */
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente para el formulario */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .form-box {
+            width: 300px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            background: rgba(255, 255, 255, 0.1);
+            margin: 15px 0;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            position: relative; /* Añadido para posicionar el ojo */
+        }
+
+        .input-field input {
+            width: 100%;
+            padding: 12px 15px;
+            background: transparent;
+            border: 0;
+            outline: none;
+            color: #fff;
+            flex-grow: 1; /* Para que el input ocupe el espacio restante */
+        }
+
+        .input-field input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Estilo específico para input[type="date"] */
+        .input-field input[type="date"] {
+            padding: 10px 15px;
+        }
+
+        /* Para navegadores WebKit (Chrome, Safari) para cambiar el color del icono de calendario */
+        .input-field input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1); /* Invierte el color para que sea blanco sobre fondo oscuro */
+            cursor: pointer;
+        }
+        /* Estilo para el campo select */
+        .input-field select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 0;
+            outline: none;
+            color: #fff;
+            border-radius: 5px;
+            appearance: none; /* Elimina la flecha predeterminada del select */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        /* Estilo para las opciones del select */
+        .input-field select option {
+            background: #333; /* Color de fondo para las opciones en el dropdown */
+            color: #fff;
+        }
+
+
+        /* Estilo para el icono del ojo */
+        .input-field .toggle-password {
+            position: absolute;
+            right: 15px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1em;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 0;
+            background: #007bff;
+            color: #fff;
+            border: 0;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        p span {
+            font-weight: 500;
+        }
+
+        /* Estilos para la página de bienvenida (no se usará si hay redirección) */
+        .welcome-box {
+            background: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #333;
+        }
+        .welcome-box h2 {
+            color: #333;
+        }
+        .welcome-box p {
+            color: #555;
+            margin-top: 20px;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 30px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="mainContainer">
+        <div class="form-box" id="formBox">
+            <h1 id="title">Iniciar Sesión</h1>
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <div class="input-field">
+                        <input type="text" placeholder="Usuario" id="loginUsername" name="username" required>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" placeholder="Contraseña" id="loginPassword" name="password" required>
+                        <span class="toggle-password" id="toggleLoginPassword">
+                            <i class="fa fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Iniciar Sesión</button>
+                <p>¿No tienes cuenta? <span id="registerLink" style="cursor: pointer; color: #007bff;">Regístrate aquí</span></p>
+                <p><span id="forgotPasswordLink" style="cursor: pointer; color: #007bff;">¿Olvidaste tu contraseña o usuario?</span></p>
+                <p><span id="changePasswordLink" style="cursor: pointer; color: #007bff;">¿Quieres cambiar tu contraseña?</span></p>
+            </form>
+
+            <form id="registerForm" style="display: none;">
+                <div class="input-group">
+                    <div class="input-field">
+                        <input type="text" placeholder="Cédula" id="regCedula" name="cedula" required>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" placeholder="Nombre Completo" id="regNombre" name="nombre" required>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" placeholder="Usuario" id="regUsuario" name="usuario" required>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" placeholder="Contraseña" id="regPassword" name="password" required>
+                        <span class="toggle-password" id="toggleRegPassword">
+                            <i class="fa fa-eye"></i>
+                        </span>
+                    </div>
+                    <div class="input-field">
+                        <input type="password" placeholder="Repetir Contraseña" id="regRepeatPassword" required>
+                        <span class="toggle-password" id="toggleRegRepeatPassword">
+                            <i class="fa fa-eye"></i>
+                        </span>
+                    </div>
+                    <div class="input-field">
+                        <input type="email" placeholder="Correo Electrónico" id="regEmail" name="email" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="regFechaNacimiento" style="color: rgba(255, 255, 255, 0.7); font-size: 0.9em; margin-right: 10px;">Fecha de Nacimiento:</label>
+                        <input type="date" id="regFechaNacimiento" name="fechaNacimiento" required style="flex-grow: 1;">
+                    </div>
+                </div>
+                <button type="submit" class="btn">Registrarse</button>
+                <p>¿Ya tienes cuenta? <span id="loginLink" style="cursor: pointer; color: #007bff;">Inicia Sesión aquí</span></p>
+            </form>
+
+            <form id="recoverForm" style="display: none;">
+                <p>¿Olvidaste tu usuario o contraseña?</p>
+                <div class="input-group">
+                    <div class="input-field">
+                        <input type="text" placeholder="Cédula" id="recCedula" name="cedula" required>
+                    </div>
+                    <div class="input-field">
+                        <input type="email" placeholder="Correo Electrónico" id="recEmail" name="email" required>
+                    </div>
+                    <div class="input-field">
+                        <select id="recoveryOption" name="recoveryOption" required>
+                            <option value="">Selecciona qué quieres recuperar</option>
+                            <option value="usuario">Usuario</option>
+                            <option value="contraseña">Contraseña</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Recuperar</button>
+                <p><span id="backToLoginRecover" style="cursor: pointer; color: #007bff;">Volver al Login</span></p>
+            </form>
+
+            <form id="changePasswordForm" style="display: none;">
+                <p>Cambiar Contraseña</p>
+                <div class="input-group">
+                    <div class="input-field">
+                        <input type="text" placeholder="Cédula" id="chpCedula" name="cedula" required>
+                    </div>
+                    <div class="input-field">
+                        <input type="text" placeholder="Usuario" id="chpUsuario" name="usuario" required>
+                    </div>
+                    <div class="input-field">
+                        <input type="email" placeholder="Correo Electrónico" id="chpEmail" name="email" required>
+                    </div>
+                    <div class="input-field" id="codeField" style="display: none;">
+                        <input type="text" placeholder="Código de 6 dígitos" id="chpCode" name="code">
+                    </div>
+                    <div class="input-field" id="newPasswordField" style="display: none;">
+                        <input type="password" placeholder="Nueva Contraseña" id="chpNewPassword" name="newPassword">
+                        <span class="toggle-password" id="toggleChpNewPassword">
+                            <i class="fa fa-eye"></i>
+                        </span>
+                    </div>
+                    <div class="input-field" id="repeatNewPasswordField" style="display: none;">
+                        <input type="password" placeholder="Repetir Nueva Contraseña" id="chpRepeatNewPassword" name="repeatNewPassword">
+                        <span class="toggle-password" id="toggleChpRepeatNewPassword">
+                            <i class="fa fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+                <button type="submit" class="btn" id="sendCodeBtn">Enviar Código</button>
+                <button type="submit" class="btn" id="changePassBtn" style="display: none;">Cambiar Contraseña</button>
+                <p><span id="backToLoginChangePass" style="cursor: pointer; color: #007bff;">Volver al Login</span></p>
+            </form>
+        </div>
+
+        <div class="welcome-box" id="welcomePage" style="display: none;">
+            <h2>¡Bienvenido a tu página principal!</h2>
+            <p>Has iniciado sesión exitosamente.</p>
+            <button id="logoutBtn" class="logout-btn">Cerrar Sesión</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const recoverForm = document.getElementById('recoverForm');
+            const changePasswordForm = document.getElementById('changePasswordForm');
+
+            const registerLink = document.getElementById('registerLink');
+            const loginLink = document.getElementById('loginLink');
+            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+            const changePasswordLink = document.getElementById('changePasswordLink');
+            const backToLoginRecover = document.getElementById('backToLoginRecover');
+            const backToLoginChangePass = document.getElementById('backToLoginChangePass');
+
+            const title = document.getElementById('title');
+            const mainContainer = document.getElementById('mainContainer');
+            const formBox = document.getElementById('formBox');
+            const welcomePage = document.getElementById('welcomePage');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            // Para el formulario de cambio de contraseña, los campos y botones dinámicos
+            const chpCodeField = document.getElementById('codeField');
+            const chpNewPasswordField = document.getElementById('newPasswordField');
+            const chpRepeatNewPasswordField = document.getElementById('repeatNewPasswordField');
+            const sendCodeBtn = document.getElementById('sendCodeBtn');
+            const changePassBtn = document.getElementById('changePassBtn');
+
+            // Toggle password functionality
+            const togglePassword = (inputId, toggleId) => {
+                const passwordInput = document.getElementById(inputId);
+                const toggleIcon = document.getElementById(toggleId);
+                if (toggleIcon) {
+                    toggleIcon.addEventListener('click', () => {
+                        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                        passwordInput.setAttribute('type', type);
+                        toggleIcon.querySelector('i').classList.toggle('fa-eye');
+                        toggleIcon.querySelector('i').classList.toggle('fa-eye-slash');
+                    });
+                }
+            };
+
+            // Aplica la funcionalidad a todos los campos de contraseña
+            togglePassword('loginPassword', 'toggleLoginPassword');
+            togglePassword('regPassword', 'toggleRegPassword');
+            togglePassword('regRepeatPassword', 'toggleRegRepeatPassword');
+            togglePassword('chpNewPassword', 'toggleChpNewPassword');
+            togglePassword('chpRepeatNewPassword', 'toggleChpRepeatNewPassword');
+
+
+            // URL de tu Google Apps Script Web App (¡YA CONFIGURADO!)
+            const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyBg54wjtSPmlF8WL-wUpf_A4oEmo5qLtk7ykKiJHlq0K6qpg3Ifn1gm7sHZE_pZRE6rg/exec';
+
+            // URL de la página a la que quieres redirigir después del login exitoso (¡YA CONFIGURADO!)
+            const REDIRECT_AFTER_LOGIN_URL = 'https://logistica2025.github.io/Soluciones_logisticas/';
+
+
+            // Funciones para mostrar/ocultar formularios
+            function hideAllForms() {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'none';
+                recoverForm.style.display = 'none';
+                changePasswordForm.style.display = 'none';
+                welcomePage.style.display = 'none';
+                formBox.style.display = 'block';
+            }
+
+            function showLoginForm() {
+                hideAllForms();
+                loginForm.style.display = 'block';
+                title.textContent = 'Iniciar Sesión';
+            }
+
+            function showRegisterForm() {
+                hideAllForms();
+                registerForm.style.display = 'block';
+                title.textContent = 'Registrarse';
+            }
+
+            function showRecoverForm() {
+                hideAllForms();
+                recoverForm.style.display = 'block';
+                title.textContent = 'Recuperar Cuenta';
+                recoverForm.reset(); // Limpiar el formulario al mostrarlo
+            }
+
+            function showChangePasswordForm() {
+                hideAllForms();
+                changePasswordForm.style.display = 'block';
+                title.textContent = 'Cambiar Contraseña';
+                // Resetear estado y campos del formulario de cambio de contraseña
+                chpCodeField.style.display = 'none';
+                chpNewPasswordField.style.display = 'none';
+                chpRepeatNewPasswordField.style.display = 'none';
+                sendCodeBtn.style.display = 'block';
+                changePassBtn.style.display = 'none';
+                changePasswordForm.reset();
+            }
+
+            // Manejadores de eventos para los enlaces de navegación
+            registerLink.addEventListener('click', showRegisterForm);
+            loginLink.addEventListener('click', showLoginForm);
+            forgotPasswordLink.addEventListener('click', showRecoverForm);
+            changePasswordLink.addEventListener('click', showChangePasswordForm);
+            backToLoginRecover.addEventListener('click', showLoginForm);
+            backToLoginChangePass.addEventListener('click', showLoginForm);
+
+            // Manejar envío del formulario de registro
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const password = document.getElementById('regPassword').value;
+                const repeatPassword = document.getElementById('regRepeatPassword').value;
+
+                if (password !== repeatPassword) {
+                    alert('Las contraseñas no coinciden.');
+                    return;
+                }
+
+                const formData = new FormData(registerForm);
+                formData.append('action', 'register');
+
+                try {
+                    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && response.status === 200) {
+                        if (result.success) {
+                            alert(result.message);
+                            registerForm.reset();
+                            showLoginForm();
+                        } else {
+                            alert(result.message);
+                        }
+                    } else {
+                        alert(`Error al registrar: ${result.message || response.statusText || 'Error desconocido'}`);
+                    }
+                } catch (error) {
+                    console.error('Error en el registro (fetch):', error);
+                    alert('Hubo un error de conexión al intentar registrarte. Por favor, revisa tu URL de Apps Script y la consola.');
+                }
+            });
+
+            // Manejar envío del formulario de login
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(loginForm);
+                formData.append('action', 'login');
+
+                try {
+                    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && response.status === 200) {
+                        if (result.success) {
+                            alert(result.message);
+                            loginForm.reset();
+                            window.location.href = REDIRECT_AFTER_LOGIN_URL;
+                        } else {
+                            alert(`Error al iniciar sesión: ${result.message}`);
+                        }
+                    } else {
+                         alert(`Error al iniciar sesión: ${result.message || response.statusText || 'Error desconocido'}`);
+                    }
+                } catch (error) {
+                    console.error('Error en el inicio de sesión (fetch):', error);
+                    alert('Hubo un error de conexión al intentar iniciar sesión. Por favor, revisa tu URL de Apps Script y la consola.');
+                }
+            });
+
+            // --- NUEVOS MANEJADORES DE EVENTOS PARA RECUPERAR Y CAMBIAR CONTRASEÑA ---
+
+            // Manejar envío del formulario de Recuperación
+            recoverForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(recoverForm);
+                formData.append('action', 'recover'); // Nueva acción para el Apps Script
+
+                try {
+                    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && response.status === 200) {
+                        alert(result.message);
+                        if (result.success) {
+                            recoverForm.reset();
+                            showLoginForm(); // Vuelve al login después de la recuperación
+                        }
+                    } else {
+                        alert(`Error al recuperar: ${result.message || response.statusText || 'Error desconocido'}`);
+                    }
+                } catch (error) {
+                    console.error('Error en la recuperación (fetch):', error);
+                    alert('Hubo un error de conexión al intentar recuperar tu cuenta. Revisa la consola.');
+                }
+            });
+
+            // Manejar envío del formulario de Cambio de Contraseña (Paso 1: Enviar Código y Paso 2: Cambiar)
+            changePasswordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                // Si el botón que se hizo clic fue 'Enviar Código'
+                if (e.submitter === sendCodeBtn) {
+                    const formData = new FormData(changePasswordForm);
+                    formData.append('action', 'sendCode'); // Nueva acción para el Apps Script
+
+                    try {
+                        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok && response.status === 200) {
+                            alert(result.message);
+                            if (result.success) {
+                                // Muestra los campos para el código y la nueva contraseña
+                                chpCodeField.style.display = 'flex';
+                                chpNewPasswordField.style.display = 'flex';
+                                chpRepeatNewPasswordField.style.display = 'flex';
+                                sendCodeBtn.style.display = 'none'; // Oculta el botón de enviar código
+                                changePassBtn.style.display = 'block'; // Muestra el botón de cambiar contraseña
+                            }
+                        } else {
+                            alert(`Error al enviar código: ${result.message || response.statusText || 'Error desconocido'}`);
+                        }
+                    } catch (error) {
+                        console.error('Error al enviar código (fetch):', error);
+                        alert('Hubo un error de conexión al intentar enviar el código. Revisa la consola.');
+                    }
+                }
+                // Si el botón que se hizo clic fue 'Cambiar Contraseña'
+                else if (e.submitter === changePassBtn) {
+                    const enteredCode = document.getElementById('chpCode').value;
+                    const newPassword = document.getElementById('chpNewPassword').value;
+                    const repeatNewPassword = document.getElementById('chpRepeatNewPasswordField').value;
+
+                    if (newPassword !== repeatNewPassword) {
+                        alert('Las nuevas contraseñas no coinciden.');
+                        return;
+                    }
+
+                    const formData = new FormData(changePasswordForm);
+                    formData.append('action', 'changePassword'); // Nueva acción
+                    formData.append('enteredCode', enteredCode); // El código que el usuario ingresó
+                    formData.append('newPassword', newPassword);
+
+                    try {
+                        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok && response.status === 200) {
+                            alert(result.message);
+                            if (result.success) {
+                                changePasswordForm.reset();
+                                showLoginForm(); // Vuelve al login después del cambio
+                            }
+                        } else {
+                            alert(`Error al cambiar contraseña: ${result.message}`);
+                        }
+                    } catch (error) {
+                        console.error('Error al cambiar contraseña (fetch):', error);
+                        alert('Hubo un error de conexión al intentar cambiar la contraseña. Revisa la consola.');
+                    }
+                }
+            });
+
+            // Manejador de evento para el botón de logout
+            logoutBtn.addEventListener('click', () => {
+                alert('Sesión cerrada.');
+                window.location.href = 'index.html'; // Redirige de nuevo a la página de login
+            });
+
+            // Muestra el formulario de login al cargar la página inicialmente
+            showLoginForm();
+        });
+    </script>
+</body>
+</html>
