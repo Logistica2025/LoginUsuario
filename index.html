@@ -265,24 +265,26 @@
                     <div class="input-field">
                         <input type="email" placeholder="Correo Electrónico" id="chpEmail" name="email" required>
                     </div>
-                    <div class="input-field" id="codeField" style="display: none;">
-                        <input type="text" placeholder="Código de 6 dígitos" id="chpCode" name="code">
+                    <div class="input-field">
+                        <input type="password" placeholder="Contraseña Anterior" id="chpOldPassword" name="oldPassword" required>
+                        <span class="toggle-password" id="toggleChpOldPassword">
+                            <i class="fa fa-eye"></i>
+                        </span>
                     </div>
-                    <div class="input-field" id="newPasswordField" style="display: none;">
-                        <input type="password" placeholder="Nueva Contraseña" id="chpNewPassword" name="newPassword">
+                    <div class="input-field">
+                        <input type="password" placeholder="Nueva Contraseña" id="chpNewPassword" name="newPassword" required>
                         <span class="toggle-password" id="toggleChpNewPassword">
                             <i class="fa fa-eye"></i>
                         </span>
                     </div>
-                    <div class="input-field" id="repeatNewPasswordField" style="display: none;">
-                        <input type="password" placeholder="Repetir Nueva Contraseña" id="chpRepeatNewPassword" name="repeatNewPassword">
+                    <div class="input-field">
+                        <input type="password" placeholder="Repetir Nueva Contraseña" id="chpRepeatNewPassword" name="repeatNewPassword" required>
                         <span class="toggle-password" id="toggleChpRepeatNewPassword">
                             <i class="fa fa-eye"></i>
                         </span>
                     </div>
                 </div>
-                <button type="submit" class="btn" id="sendCodeBtn">Enviar Código</button>
-                <button type="submit" class="btn" id="changePassBtn" style="display: none;">Cambiar Contraseña</button>
+                <button type="submit" class="btn" id="changePassBtn">Cambiar Contraseña</button>
                 <p><span id="backToLoginChangePass" style="cursor: pointer; color: #007bff;">Volver al Login</span></p>
             </form>
         </div>
@@ -314,11 +316,7 @@
             const welcomePage = document.getElementById('welcomePage');
             const logoutBtn = document.getElementById('logoutBtn');
 
-            // Para el formulario de cambio de contraseña, los campos y botones dinámicos
-            const chpCodeField = document.getElementById('codeField');
-            const chpNewPasswordField = document.getElementById('newPasswordField');
-            const chpRepeatNewPasswordField = document.getElementById('repeatNewPasswordField'); // Esta es la div contenedora
-            const sendCodeBtn = document.getElementById('sendCodeBtn');
+            // Los campos dinámicos para el cambio de contraseña ya no son necesarios, siempre están visibles
             const changePassBtn = document.getElementById('changePassBtn');
 
             // Toggle password functionality
@@ -339,6 +337,7 @@
             togglePassword('loginPassword', 'toggleLoginPassword');
             togglePassword('regPassword', 'toggleRegPassword');
             togglePassword('regRepeatPassword', 'toggleRegRepeatPassword');
+            togglePassword('chpOldPassword', 'toggleChpOldPassword'); // Nuevo campo para contraseña anterior
             togglePassword('chpNewPassword', 'toggleChpNewPassword');
             togglePassword('chpRepeatNewPassword', 'toggleChpRepeatNewPassword');
 
@@ -383,13 +382,7 @@
                 hideAllForms();
                 changePasswordForm.style.display = 'block';
                 title.textContent = 'Cambiar Contraseña';
-                // Resetear estado y campos del formulario de cambio de contraseña
-                chpCodeField.style.display = 'none';
-                chpNewPasswordField.style.display = 'none';
-                chpRepeatNewPasswordField.style.display = 'none';
-                sendCodeBtn.style.display = 'block';
-                changePassBtn.style.display = 'none';
-                changePasswordForm.reset();
+                changePasswordForm.reset(); // Limpiar el formulario al mostrarlo
             }
 
             // Manejadores de eventos para los enlaces de navegación
@@ -504,79 +497,44 @@
                 }
             });
 
-            // Manejar envío del formulario de Cambio de Contraseña (Paso 1: Enviar Código y Paso 2: Cambiar)
+            // Manejar envío del formulario de Cambio de Contraseña
             changePasswordForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                // Si el botón que se hizo clic fue 'Enviar Código'
-                if (e.submitter === sendCodeBtn) {
-                    const formData = new FormData(changePasswordForm);
-                    formData.append('action', 'sendCode'); // Nueva acción para el Apps Script
+                const oldPassword = document.getElementById('chpOldPassword').value;
+                const newPassword = document.getElementById('chpNewPassword').value;
+                const repeatNewPassword = document.getElementById('chpRepeatNewPassword').value;
 
-                    try {
-                        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-                            method: 'POST',
-                            body: formData
-                        });
-
-                        const result = await response.json();
-
-                        if (response.ok && response.status === 200) {
-                            alert(result.message);
-                            if (result.success) {
-                                // Muestra los campos para el código y la nueva contraseña
-                                chpCodeField.style.display = 'flex';
-                                chpNewPasswordField.style.display = 'flex';
-                                chpRepeatNewPasswordField.style.display = 'flex'; // Muestra la div contenedora
-                                sendCodeBtn.style.display = 'none'; // Oculta el botón de enviar código
-                                changePassBtn.style.display = 'block'; // Muestra el botón de cambiar contraseña
-                            }
-                        } else {
-                            alert(`Error al enviar código: ${result.message || response.statusText || 'Error desconocido'}`);
-                        }
-                    } catch (error) {
-                        console.error('Error al enviar código (fetch):', error);
-                        alert('Hubo un error de conexión al intentar enviar el código. Revisa la consola.');
-                    }
+                if (newPassword !== repeatNewPassword) {
+                    alert('La nueva contraseña y su confirmación no coinciden.');
+                    return;
                 }
-                // Si el botón que se hizo clic fue 'Cambiar Contraseña'
-                else if (e.submitter === changePassBtn) {
-                    const enteredCode = document.getElementById('chpCode').value;
-                    const newPassword = document.getElementById('chpNewPassword').value;
-                    // >>> MODIFICACIÓN CLAVE AQUÍ: Corregido el ID del elemento <<<
-                    const repeatNewPassword = document.getElementById('chpRepeatNewPassword').value; 
 
-                    if (newPassword !== repeatNewPassword) {
-                        alert('Las nuevas contraseñas no coinciden.');
-                        return;
-                    }
+                const formData = new FormData(changePasswordForm);
+                formData.append('action', 'changePassword'); // Misma acción, pero diferente lógica en Apps Script
+                formData.append('oldPassword', oldPassword); // Envía la contraseña anterior
+                formData.append('newPassword', newPassword);
 
-                    const formData = new FormData(changePasswordForm);
-                    formData.append('action', 'changePassword'); // Nueva acción
-                    formData.append('enteredCode', enteredCode); // El código que el usuario ingresó
-                    formData.append('newPassword', newPassword);
+                try {
+                    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        body: formData
+                    });
 
-                    try {
-                        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-                            method: 'POST',
-                            body: formData
-                        });
+                    const result = await response.json();
 
-                        const result = await response.json();
-
-                        if (response.ok && response.status === 200) {
-                            alert(result.message);
-                            if (result.success) {
-                                changePasswordForm.reset();
-                                showLoginForm(); // Vuelve al login después del cambio
-                            }
-                        } else {
-                            alert(`Error al cambiar contraseña: ${result.message}`);
+                    if (response.ok && response.status === 200) {
+                        alert(result.message);
+                        if (result.success) {
+                            changePasswordForm.reset();
+                            showLoginForm(); // Vuelve al login después del cambio
                         }
-                    } catch (error) {
-                        console.error('Error al cambiar contraseña (fetch):', error);
-                        alert('Hubo un error de conexión al intentar cambiar la contraseña. Revisa la consola.');
+                    } else {
+                        alert(`Error al cambiar contraseña: ${result.message || response.statusText || 'Error desconocido'}`);
                     }
+                } catch (error) {
+                    console.error('Error al cambiar contraseña (fetch):', error);
+                    alert('Hubo un error de conexión al intentar cambiar la contraseña. Revisa la consola.');
                 }
             });
 
