@@ -317,7 +317,7 @@
             // Para el formulario de cambio de contraseña, los campos y botones dinámicos
             const chpCodeField = document.getElementById('codeField');
             const chpNewPasswordField = document.getElementById('newPasswordField');
-            const chpRepeatNewPasswordField = document.getElementById('repeatNewPasswordField');
+            const chpRepeatNewPasswordField = document.getElementById('repeatNewPasswordField'); // Esta es la div contenedora
             const sendCodeBtn = document.getElementById('sendCodeBtn');
             const changePassBtn = document.getElementById('changePassBtn');
 
@@ -464,7 +464,7 @@
                             alert(`Error al iniciar sesión: ${result.message}`);
                         }
                     } else {
-                         alert(`Error al iniciar sesión: ${result.message || response.statusText || 'Error desconocido'}`);
+                        alert(`Error al iniciar sesión: ${result.message || response.statusText || 'Error desconocido'}`);
                     }
                 } catch (error) {
                     console.error('Error en el inicio de sesión (fetch):', error);
@@ -527,7 +527,7 @@
                                 // Muestra los campos para el código y la nueva contraseña
                                 chpCodeField.style.display = 'flex';
                                 chpNewPasswordField.style.display = 'flex';
-                                chpRepeatNewPasswordField.style.display = 'flex';
+                                chpRepeatNewPasswordField.style.display = 'flex'; // Muestra la div contenedora
                                 sendCodeBtn.style.display = 'none'; // Oculta el botón de enviar código
                                 changePassBtn.style.display = 'block'; // Muestra el botón de cambiar contraseña
                             }
@@ -543,7 +543,8 @@
                 else if (e.submitter === changePassBtn) {
                     const enteredCode = document.getElementById('chpCode').value;
                     const newPassword = document.getElementById('chpNewPassword').value;
-                    const repeatNewPassword = document.getElementById('chpRepeatNewPasswordField').value;
+                    // >>> MODIFICACIÓN CLAVE AQUÍ: Corregido el ID del elemento <<<
+                    const repeatNewPassword = document.getElementById('chpRepeatNewPassword').value; 
 
                     if (newPassword !== repeatNewPassword) {
                         alert('Las nuevas contraseñas no coinciden.');
