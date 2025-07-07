@@ -301,14 +301,14 @@
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
             const recoverForm = document.getElementById('recoverForm');
-            const changePasswordForm = document.getElementById('changePasswordForm');
+            const changePasswordForm = document.getElementById('changePasswordForm'); // Nuevo
 
             const registerLink = document.getElementById('registerLink');
             const loginLink = document.getElementById('loginLink');
             const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-            const changePasswordLink = document.getElementById('changePasswordLink');
+            const changePasswordLink = document.getElementById('changePasswordLink'); // Nuevo
             const backToLoginRecover = document.getElementById('backToLoginRecover');
-            const backToLoginChangePass = document.getElementById('backToLoginChangePass');
+            const backToLoginChangePass = document.getElementById('backToLoginChangePass'); // Nuevo
 
             const title = document.getElementById('title');
             const mainContainer = document.getElementById('mainContainer');
@@ -354,7 +354,7 @@
                 loginForm.style.display = 'none';
                 registerForm.style.display = 'none';
                 recoverForm.style.display = 'none';
-                changePasswordForm.style.display = 'none';
+                changePasswordForm.style.display = 'none'; // Nuevo
                 welcomePage.style.display = 'none';
                 formBox.style.display = 'block';
             }
@@ -378,7 +378,7 @@
                 recoverForm.reset(); // Limpiar el formulario al mostrarlo
             }
 
-            function showChangePasswordForm() {
+            function showChangePasswordForm() { // Nueva función
                 hideAllForms();
                 changePasswordForm.style.display = 'block';
                 title.textContent = 'Cambiar Contraseña';
@@ -389,9 +389,9 @@
             registerLink.addEventListener('click', showRegisterForm);
             loginLink.addEventListener('click', showLoginForm);
             forgotPasswordLink.addEventListener('click', showRecoverForm);
-            changePasswordLink.addEventListener('click', showChangePasswordForm);
+            changePasswordLink.addEventListener('click', showChangePasswordForm); // Nuevo
             backToLoginRecover.addEventListener('click', showLoginForm);
-            backToLoginChangePass.addEventListener('click', showLoginForm);
+            backToLoginChangePass.addEventListener('click', showLoginForm); // Nuevo
 
             // Manejar envío del formulario de registro
             registerForm.addEventListener('submit', async (e) => {
